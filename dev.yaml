@@ -20,14 +20,14 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: redis-secrets-prod
-                  key: REDIS_PASS
+                  key: REDIS_PASSWORD
             - name: REDIS_HOST
               value: "redis-stedi-prod"
             - name: REDIS_PORT
               value: "6379"
             - name: REDIS_DB
               value: "0"
-            - name: KAfKA_BROKER
+            - name: KAFKA_BROKER
               value: "localhost:9092"
           ports: 
             - containerPort: 443
@@ -42,5 +42,5 @@ spec:
             httpGet:
               path: /
               port: 4567
-            initialDelaySeconds: 3
+            initialDelaySeconds: 10
             periodSeconds: 3
