@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-stedi-muffin
+spec:
+  selector:
+    matchLabels:
+      app: redis-stedi-muffin
+  serviceName: redis-stedi-muffin
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis-stedi-muffin
+    spec:
+      containers:
+        - name: redis-stedi-muffin
+          image: redis:7.0.5-alpine
+          imagePullPolicy: Always
+          args: ["--requirepass", "${REDIS_PASSWORD}", "--appendonly", "yes", "--save", "900", "1", "--save", "30", "2"]
+          ports:
+            - containerPort: 6379
+              name: redis
+          env:
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis-secrets-muffin
+                key: REDIS_PASSWORD
+          volumeMounts:
+            - name: redis-muffin-volume
+              mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-muffin-volume
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-stedi-muffin
+spec:
+  ports:
+    - port: 6379
+      name: redis
+  clusterIP: None
+  selector:
+    app: redis-stedi-muffin
