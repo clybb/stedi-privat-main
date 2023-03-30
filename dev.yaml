@@ -83,4 +83,3 @@ spec:
             name: stedi-muffin-nodeport
             port:
               number: 80
-              
